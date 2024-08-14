@@ -301,31 +301,64 @@ def main():
     # Create a sidebar for input and shopping list
     with st.sidebar:
         
-
         st.logo("wal.png")
 
         st.header("Your Shopping List")
         new_item = st.text_input("What would you like to add?")
-        if st.button("Add Item(s)", key="add_items_button"):
-            if new_item:
-                extracted_items = extract_items_from_input(new_item)
-                for item in extracted_items:
-                    if item not in st.session_state.shopping_list:
-                        st.session_state.shopping_list.append(item)
-                st.success(f"Added {', '.join(extracted_items)} to your list.")
+
+        # Add a section for store map
+        col1, col2 = st.columns(2)
+
+        with col1:        
+            if st.button("Add Item", key="add_items_button"):
+                if new_item:
+                    extracted_items = extract_items_from_input(new_item)
+                    for item in extracted_items:
+                        if item not in st.session_state.shopping_list:
+                            st.session_state.shopping_list.append(item)
+                    st.success(f"Added {', '.join(extracted_items)} to your list.")
+                st.rerun()
+
+        with col2:
+            if st.button("Clear List", key="clear_list_button"):
+                st.session_state.shopping_list = []
+                st.session_state.map_image = None
+                st.session_state.directions = None
+                st.session_state.audio_file = None
+                st.success("Shopping list cleared.")
+                st.rerun()
 
         for index, item in enumerate(st.session_state.shopping_list):
             if st.checkbox(item, key=f"item_{index}"):
                 st.session_state.shopping_list.remove(item)
-                st.experimental_rerun()
+                st.rerun()
 
-        if st.button("Clear List", key="clear_list_button"):
-            st.session_state.shopping_list = []
-            st.session_state.map_image = None
-            st.session_state.directions = None
-            st.session_state.audio_file = None
-            st.success("Shopping list cleared.")
+    
+    # Add chatbot interface
+    st.subheader("Ask WALBOT")
+    user_query = st.text_input("Ask anything about Walmart products, recipes, or comparisons:")
+    if st.button("Get Answer"):
+        if user_query:
+            with st.spinner("WALBOT is thinking..."):
+                response = get_chatbot_response(user_query)
+            st.markdown(response)
+        else:
+            st.warning("Please enter a question for WALBOT.")
+    
+    
+    # Add a section for recommendations
+    st.header("Walmart Recommends")
 
+    if st.session_state.shopping_list:
+        for item in st.session_state.shopping_list:
+            with st.expander(f"Recommendations for {item}"):
+                recommendations = get_recommendations(item)
+                st.markdown(recommendations)
+    else:
+        st.info("Add items to your shopping list to see personalized recommendations!")
+
+    
+    # Add a section for store map
     col1, col2 = st.columns([2, 1])
 
     with col1:
@@ -360,28 +393,6 @@ def main():
             
             if st.session_state.audio_file:
                 st.audio(st.session_state.audio_file, format='audio/mp3')
-
-    # Add a new section for recommendations
-    st.header("Walmart Recommends")
-
-    if st.session_state.shopping_list:
-        for item in st.session_state.shopping_list:
-            with st.expander(f"Recommendations for {item}"):
-                recommendations = get_recommendations(item)
-                st.markdown(recommendations)
-    else:
-        st.info("Add items to your shopping list to see personalized recommendations!")
-
-    # Add chatbot interface
-    st.subheader("Ask WALBOT")
-    user_query = st.text_input("Ask anything about Walmart products, recipes, or comparisons:")
-    if st.button("Get Answer"):
-        if user_query:
-            with st.spinner("WALBOT is thinking..."):
-                response = get_chatbot_response(user_query)
-            st.markdown(response)
-        else:
-            st.warning("Please enter a question for WALBOT.")
 
     # Add a footer
     st.markdown("---")
