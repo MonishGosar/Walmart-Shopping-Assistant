@@ -213,17 +213,18 @@ Example format:
     
     return directions, audio_file
 
-def get_recommendations(item):
-    prompt = f"""You are WALBOT, a helpful Walmart store assistant. A customer is interested in {item}.
-    Provide 3 specific product recommendations for {item}, including brand names and brief descriptions.
-    Also suggest 2 related cross-recommendations that go well with {item}.
+def get_recommendations(shopping_list):
+    items = ', '.join(shopping_list)
+    prompt = f"""You are WALBOT, a helpful Walmart store assistant. A customer is interested in the following items: {items}.
+    Provide 3 specific product recommendations based on the entire list, including brand names and brief descriptions.
+    Also suggest 2 related cross-recommendations that go well with the items in the list.
     Be friendly and concise in your response.
     
     For each product, provide a URL to an image of that product.
     Use the format [PRODUCT_NAME](IMAGE_URL) for each image suggestion.
     
     Format your response as follows:
-    Recommendations for {item}:
+    Recommendations:
     1. [Product 1]
     2. [Product 2]
     3. [Product 3]
@@ -231,12 +232,11 @@ def get_recommendations(item):
     You might also like:
     1. [Cross-recommendation 1]
     2. [Cross-recommendation 2]
-
-    Show items in a caroeusel manner
     """
-    
+
     response = model.generate_content(prompt)
     return response.text
+
 
 def set_walmart_theme():
     st.markdown("""
@@ -274,7 +274,7 @@ def get_chatbot_response(query):
 
     Please provide a helpful, friendly, and informative response. If the query is about product comparisons, include nutritional information if relevant. If it's about recipes, suggest Walmart products that could be used. Always maintain a helpful and positive tone.
 
-    Limit your response to 150 words. Answwer in bullet points 
+    Limit your response to 150 words. Answer in bullet points 
     """
     
     response = model.generate_content(prompt)
@@ -290,6 +290,8 @@ def main():
         st.session_state.directions = None
     if 'audio_file' not in st.session_state:
         st.session_state.audio_file = None
+    if 'walbot_response' not in st.session_state:
+        st.session_state.walbot_response = ""
 
     st.set_page_config(layout="wide")
     set_walmart_theme()
@@ -341,21 +343,25 @@ def main():
         if user_query:
             with st.spinner("WALBOT is thinking..."):
                 response = get_chatbot_response(user_query)
-            st.markdown(response)
+                st.session_state.walbot_response = response
         else:
             st.warning("Please enter a question for WALBOT.")
+    
+    # Display the WalBot response if it exists
+    if st.session_state.walbot_response:
+        st.markdown(st.session_state.walbot_response)
     
     
     # Add a section for recommendations
     st.header("Walmart Recommends")
 
     if st.session_state.shopping_list:
-        for item in st.session_state.shopping_list:
-            with st.expander(f"Recommendations for {item}"):
-                recommendations = get_recommendations(item)
-                st.markdown(recommendations)
+        with st.expander("Recommendations for Your Shopping List"):
+            recommendations = get_recommendations(st.session_state.shopping_list)
+            st.markdown(recommendations)
     else:
         st.info("Add items to your shopping list to see personalized recommendations!")
+
 
     
     # Add a section for store map
