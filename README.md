@@ -46,14 +46,6 @@ Here are some screenshots of the Walmart Smart Shopping Bot in action:
 ![Main Interface](https://github.com/MonishGosar/Walmart-Shopping-Assistant/blob/main/Screenshot%202024-08-30%20212303.png)
 *Caption: The main interface of the Walmart Smart Shopping Bot.*
 
-### Shopping List
-![Shopping List](Screenshot 2024-08-30 212327.png)
-*Caption: A user's shopping list with added items.*
-
-### Store Map
-![Store Map](path/to/store_map.png)
-*Caption: Interactive store map for easy navigation.*
-
 ### Product Recommendations
-![Product Recommendations](path/to/recommendations.png)
+![Product Recommendations](https://github.com/MonishGosar/Walmart-Shopping-Assistant/blob/main/Screenshot%202024-08-30%20212404.png)
 *Caption: Personalized product recommendations based on user history.*
