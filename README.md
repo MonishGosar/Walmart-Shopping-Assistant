@@ -43,11 +43,11 @@ streamlit run app.py
 Here are some screenshots of the Walmart Smart Shopping Bot in action:
 
 ### Main Interface
-![Main Interface](path/to/main_interface.png)
+![Main Interface](Screenshot 2024-08-30 212303.png)
 *Caption: The main interface of the Walmart Smart Shopping Bot.*
 
 ### Shopping List
-![Shopping List](path/to/shopping_list.png)
+![Shopping List](Screenshot 2024-08-30 212327.png)
 *Caption: A user's shopping list with added items.*
 
 ### Store Map
